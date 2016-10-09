@@ -51,8 +51,8 @@ KafkaAdapter = function () {
                 console.log(err);
             }
             if(data){
-                console.log("data sent");
-                console.log(data);
+                // console.log("data sent");
+                // console.log(data);
             }
         })
     };

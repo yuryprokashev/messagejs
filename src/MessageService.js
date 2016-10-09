@@ -17,7 +17,7 @@ MessageService = function(m, b) {
             responsePayload: {},
             responseErrors: []
         };
-        console.log(message);
+        // console.log(message);
         m.create(
             {
                 _id: _id,
