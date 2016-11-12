@@ -2,9 +2,9 @@
  * Created by py on 16/09/16.
  */
 
-const MessageService = require('./MessageService');
-const MessageModel = require('./MessageModel');
+const MessageService = require('./MessageService2');
+const parseProcessArgs = require('./parseProcessArgs');
+var args = parseProcessArgs();
 
-const Bus = require('./BusService');
-
-var app = new MessageService(MessageModel, Bus);
+var app = new MessageService(args[0].isProd);
+// app.listen();
