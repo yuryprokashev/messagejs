@@ -10,12 +10,19 @@ module.exports = (messageService, kafkaService) => {
     };
 
     messageCtrl.createMessage = (message) => {
+        let response = {
+            requestId: message.requestId,
+            responsePayload: {},
+            responseErrors: []
+        };
         messageService.create(message).then(
             (result) => {
-                kafkaService.send("message-done", result);
+                response.responsePayload = result;
+                kafkaService.send("message-done", response);
             },
             (error) => {
-                kafkaService.send("message-done", error);
+                response.responseErrors = error;
+                kafkaService.send("message-done", response);
             }
         )
 
