@@ -11,7 +11,7 @@ module.exports = (messageService, kafkaService) => {
 
     messageCtrl.createMessage = (message) => {
         let response = {
-            requestId: message.requestId,
+            requestId: JSON.parse(message.value).requestId,
             responsePayload: {},
             responseErrors: []
         };
