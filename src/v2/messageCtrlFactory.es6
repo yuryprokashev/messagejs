@@ -21,7 +21,7 @@ module.exports = (messageService, kafkaService) => {
                 kafkaService.send("message-done", response);
             },
             (error) => {
-                response.responseErrors = error;
+                response.responseErrors.push(error);
                 kafkaService.send("message-done", response);
             }
         )

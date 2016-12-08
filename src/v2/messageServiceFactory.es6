@@ -8,6 +8,7 @@ module.exports = db => {
     const guid = require('../guid.js');
     const messageService = {};
     messageService.create = (message) => {
+        console.log(JSON.stringify(message));
         return new Promise(
             (resolve, reject) => {
                 Message.create(
