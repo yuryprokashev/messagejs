@@ -8,22 +8,23 @@ module.exports = db => {
     const guid = require('../guid.js');
     const messageService = {};
     messageService.create = (message) => {
-        console.log(JSON.stringify(message));
+        let messageVal = JSON.parse(message.value);
         return new Promise(
             (resolve, reject) => {
                 Message.create(
                     {
                         _id: guid(),
-                        occuredAt: message.requestPayload.occuredAt,
+                        occuredAt: messageVal.requestPayload.occuredAt,
                         storedAt: new Date().valueOf(),
-                        sourceId: message.requestPayload.sourceId,
-                        userId: message.requestPayload.user,
-                        payload: JSON.stringify(message.requestPayload.payload),
-                        userToken: message.requestPayload.userToken,
-                        commandId: message.requestPayload.commandId
+                        sourceId: messageVal.requestPayload.sourceId,
+                        userId: messageVal.requestPayload.user,
+                        payload: JSON.stringify(messageVal.requestPayload.payload),
+                        userToken: messageVal.requestPayload.userToken,
+                        commandId: messageVal.requestPayload.commandId
                     },
                     (err, result) => {
                         if(err){ return reject(err);}
+                        console.log(result);
                         resolve(result);
                     }
                 )
