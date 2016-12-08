@@ -1,10 +1,9 @@
 /**
  * Created by py on 09/08/16.
  */
-var mongoose = require( 'mongoose' );
-var MyDates = require('./MyDates');
+const mongoose = require( 'mongoose' );
 
-var messageSchema = new mongoose.Schema( {
+let messageSchema = new mongoose.Schema( {
 
     _id: { type: String, required: true }, // -> guid(), added on server when saved to Messages collection
 
