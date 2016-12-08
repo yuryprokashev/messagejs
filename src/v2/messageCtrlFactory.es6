@@ -5,6 +5,10 @@
 module.exports = (messageService, kafkaService) => {
     let messageCtrl = {};
 
+    messageCtrl.subscribe = (topic, callback) => {
+        kafkaService.subscribe(topic, callback);
+    };
+
     messageCtrl.createMessage = (message) => {
         messageService.create(message).then(
             (result) => {
