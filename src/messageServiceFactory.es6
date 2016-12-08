@@ -5,22 +5,21 @@
 
 module.exports = db => {
     let Message = db.model("Message", require('./messageSchema.es6'), 'messages');
-    const guid = require('../guid.js');
+    const guid = require('./guid.es6');
     const messageService = {};
-    messageService.create = (message) => {
-        let messageVal = JSON.parse(message.value);
+    messageService.create = (parsedMessage) => {
         return new Promise(
             (resolve, reject) => {
                 Message.create(
                     {
                         _id: guid(),
-                        occuredAt: messageVal.requestPayload.occuredAt,
+                        occuredAt: parsedMessage.requestPayload.occuredAt,
                         storedAt: new Date().valueOf(),
-                        sourceId: messageVal.requestPayload.sourceId,
-                        userId: messageVal.requestPayload.user,
-                        payload: JSON.stringify(messageVal.requestPayload.payload),
-                        userToken: messageVal.requestPayload.userToken,
-                        commandId: messageVal.requestPayload.commandId
+                        sourceId: parsedMessage.requestPayload.sourceId,
+                        userId: parsedMessage.requestPayload.user,
+                        payload: JSON.stringify(parsedMessage.requestPayload.payload),
+                        userToken: parsedMessage.requestPayload.userToken,
+                        commandId: parsedMessage.requestPayload.commandId
                     },
                     (err, result) => {
                         if(err){ return reject(err);}

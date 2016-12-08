@@ -9,13 +9,14 @@ module.exports = (messageService, kafkaService) => {
         kafkaService.subscribe(topic, callback);
     };
 
-    messageCtrl.createMessage = (message) => {
+    messageCtrl.createMessage = (kafkaMessage) => {
+        let parsedMessage = JSON.parse(kafkaMessage.value);
         let response = {
-            requestId: JSON.parse(message.value).requestId,
+            requestId: parsedMessage.requestId,
             responsePayload: {},
             responseErrors: []
         };
-        messageService.create(message).then(
+        messageService.create(parsedMessage).then(
             (result) => {
                 response.responsePayload = result;
                 kafkaService.send("message-done", response);
@@ -25,7 +26,6 @@ module.exports = (messageService, kafkaService) => {
                 kafkaService.send("message-done", response);
             }
         )
-
     };
 
     return messageCtrl;
