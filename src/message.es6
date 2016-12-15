@@ -32,6 +32,6 @@ kafkaBus.producer.on('ready', ()=> {
         db = dbFactory(config.db.dbURL);
         messageService = messageServiceFactory(db);
         messageCtrl = messageCtrlFactory(messageService,  kafkaService);
-        messageCtrl.subscribe('message-new', messageCtrl.createMessage);
+        kafkaService.subscribe('create-message-request', messageCtrl.createMessage);
     });
 });
