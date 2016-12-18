@@ -13,7 +13,7 @@ module.exports = db => {
                 Message.create(
                     {
                         _id: guid(),
-                        occuredAt: data.occuredAt,
+                        occurredAt: data.occurredAt,
                         storedAt: new Date().valueOf(),
                         sourceId: data.sourceId,
                         userId: data.user,

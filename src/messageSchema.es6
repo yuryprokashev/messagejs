@@ -7,7 +7,7 @@ let messageSchema = new mongoose.Schema( {
 
     _id: { type: String, required: true }, // -> guid(), added on server when saved to Messages collection
 
-    occuredAt: { type: Number, required: true }, // -> milliseconds from 1-Jan-1970, received from client
+    occurredAt: { type: Number, required: true }, // -> milliseconds from 1-Jan-1970, received from client
 
     storedAt: {type: Number, required: true}, // -> milliseconds from 1-Jan-1970, added on server when saved to Messages collection
 
