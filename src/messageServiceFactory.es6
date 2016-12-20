@@ -16,7 +16,7 @@ module.exports = db => {
                         occurredAt: data.occurredAt,
                         storedAt: new Date().valueOf(),
                         sourceId: data.sourceId,
-                        userId: data.user,
+                        userId: data.userId,
                         payload: JSON.stringify(data.payload),
                         userToken: data.userToken,
                         commandId: data.commandId
