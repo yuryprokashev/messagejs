@@ -5,7 +5,7 @@
 
 module.exports = db => {
     let Message = db.model("Message", require('./messageSchema.es6'), 'messages');
-    const guid = require('./guid.es6');
+    const guid = require('./helpers/guid.es6');
     const messageService = {};
     messageService.create = (query, data) => {
         return new Promise(
