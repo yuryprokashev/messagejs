@@ -1,6 +1,9 @@
 /**
  * Created by py on 09/08/16.
  */
+
+'use strict';
+
 const mongoose = require( 'mongoose' );
 
 let messageSchema = new mongoose.Schema( {
