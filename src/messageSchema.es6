@@ -16,23 +16,23 @@ const messageSchema = new mongoose.Schema( {
     occurredAt: {
         type: Number,
         required: true,
-        get: v => Math.round(v),
-        set: v => Math.round(v)
+        get: v => {return Math.round(v)},
+        set: v => {return Math.round(v)},
     }, // -> milliseconds from 1-Jan-1970, received from client
 
     storedAt: {
         type: Number,
         required: true,
-        get: v => Math.round(v),
-        set: v => Math.round(v),
-        default: Math.round(new Date().valueOf())
+        get: v => {return Math.round(v)},
+        set: v => {return Math.round(v)},
+        default: new Date().valueOf()
     }, // -> milliseconds from 1-Jan-1970, added on server when saved to Messages collection
 
     sourceId: {
         type: Number,
         required: true,
-        get: v => Math.round(v),
-        set: v => Math.round(v)
+        get: v => {return Math.round(v)},
+        set: v => {return Math.round(v)},
     }, // -> indicator of the Message source system, received from client
 
     userId: {
