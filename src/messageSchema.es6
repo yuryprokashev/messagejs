@@ -24,7 +24,8 @@ const messageSchema = new mongoose.Schema( {
         type: Number,
         required: true,
         get: v => Math.round(v),
-        set: v => Math.round(v)
+        set: v => Math.round(v),
+        default: new Date().valueOf()
     }, // -> milliseconds from 1-Jan-1970, added on server when saved to Messages collection
 
     sourceId: {
