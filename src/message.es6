@@ -14,10 +14,7 @@ let kafkaHost = (function(bool){
     return result;
 })(args[0].isProd);
 
-const dbFactory = require('./dbFactory.es6');
-// const kafkaBusFactory = require('./kafkaBusFactory.es6');
-// const kafkaServiceFactory = require('./kafkaServiceFactory.es6');
-
+const dbFactory = require('./dbFactory.es6')
 const kafkaBusFactory = require('my-kafka').kafkaBusFactory;
 const kafkaServiceFactory = require('my-kafka').kafkaServiceFactory;
 const configFactory = require('./configFactory.es6');
