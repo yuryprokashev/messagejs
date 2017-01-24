@@ -24,10 +24,6 @@ module.exports = (kafkaBus) =>{
                 console.log('-------------------');
             }
         };
-        // producer.on('ready', function(){
-        //     console.log(JSON.stringify(message));
-        //     producer.send([{topic: topic, messages: JSON.stringify(message)}], onProducerSent);
-        // });
         kafkaBus.producer.on('error', onProducerError);
         kafkaBus.producer.send([{topic: topic, messages: JSON.stringify(message)}], onProducerSent);
     };
@@ -60,6 +56,48 @@ module.exports = (kafkaBus) =>{
         kafkaBus.consumer.addTopics(topics, onTopicsAdded);
         kafkaBus.consumer.on('message', onConsumerMessage);
         kafkaBus.consumer.on('error', onConsumerError);
+    };
+
+    kafkaService.extractContext = kafkaMessage => {
+        let context;
+        context = JSON.parse(kafkaMessage.value);
+        if(context === undefined) {
+            let newContext = {};
+            newContext.response = {error: 'arrived context is empty'};
+            kafkaService.send(kafkaService.makeResponseTopic(kafkaMessage), newContext);
+        }
+        return context;
+    };
+
+    kafkaService.extractQuery = kafkaMessage => {
+        let query = JSON.parse(kafkaMessage.value).request.query;
+        if(query === undefined || query === null) {
+            let context;
+            context = kafkaService.extractContext(kafkaMessage);
+            context.response = {error: 'query is empty'};
+            kafkaService.send(kafkaService.makeResponseTopic(kafkaMessage), context);
+        }
+        else {
+            return query;
+        }
+    };
+
+    kafkaService.extractWriteData = kafkaMessage => {
+        let profile = JSON.parse(kafkaMessage.value).request.writeData;
+        if(profile === undefined || profile === null) {
+            let context;
+            context = kafkaService.extractContext(kafkaMessage);
+            context.response = {error: 'profile is empty'};
+            kafkaService.send(kafkaService.makeResponseTopic(kafkaMessage), context);
+        }
+        else {
+            return profile;
+        }
+    };
+
+    kafkaService.makeResponseTopic = kafkaMessage => {
+        let re = /-request/;
+        return kafkaMessage.topic.replace(re, '-response');
     };
 
     return kafkaService;
