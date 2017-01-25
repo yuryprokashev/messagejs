@@ -11,7 +11,7 @@ module.exports = (serviceName) => {
     configObject.serviceName = serviceName;
 
     hostName = os.hostname();
-    
+
     configObject.init = () => {
         return new Promise(
             (resolve, reject) => {

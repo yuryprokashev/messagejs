@@ -55,23 +55,23 @@ kafkaBus.producer.on('ready', ()=> {
             configCtrl = configCtrlFactory(configService, kafkaService);
             kafkaService.subscribe('get-config-response', configCtrl.writeConfig);
             kafkaService.send('get-config-request', configObject);
+            configCtrl.on('ready', () => {
+                dbConfig = configService.read(SERVICE_NAME, 'db');
+                dbConnectStr = buildMongoConStr(dbConfig);
+                db = dbFactory(dbConnectStr);
+
+                messageService = messageServiceFactory(db);
+                messageCtrl = messageCtrlFactory(messageService, kafkaService);
+
+                kafkaListeners = configService.read(SERVICE_NAME, 'kafkaListeners');
+                kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
+            });
         },
         (error) => {
             console.log(JSON.stringify(error));
         }
     );
 
-    configCtrl.on('ready', () => {
-        dbConfig = configService.read(SERVICE_NAME, 'db');
-        dbConnectStr = buildMongoConStr(dbConfig);
-        db = dbFactory(dbConnectStr);
-
-        messageService = messageServiceFactory(db);
-        messageCtrl = messageCtrlFactory(messageService, kafkaService);
-
-        kafkaListeners = configService.read(SERVICE_NAME, 'kafkaListeners');
-        kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
-    });
 
 
     // configService = configFactory(kafkaService);
