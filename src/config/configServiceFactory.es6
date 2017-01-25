@@ -6,7 +6,7 @@ module.exports = configObject => {
     let configService = {};
 
     configService.read = (serviceName, propertyName) => {
-        
+
         if(configObject !== undefined) {
             return configObject;
         }
