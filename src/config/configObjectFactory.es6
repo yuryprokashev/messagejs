@@ -11,9 +11,19 @@ module.exports = (serviceName) => {
     configObject.serviceName = serviceName;
 
     hostName = os.hostname();
-    dns.lookup(hostName, {family: 4},(err, address, family) => {
-        configObject.serviceIP = address;
-        console.log(`configObject is ${JSON.stringify(configObject)}`);
-        return configObject;
-    });
+    
+    configObject.init = () => {
+        return new Promise(
+            (resolve, reject) => {
+                dns.lookup(hostName, {family: 4},(err, address, family) => {
+                    if(err){reject(err)}
+                    configObject.serviceIP = address;
+                    resolve(configObject);
+                });
+            }
+        )
+    };
+
+    return configObject;
+
 };

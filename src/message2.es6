@@ -49,11 +49,17 @@ kafkaService = kafkaServiceFactory(kafkaBus);
 kafkaBus.producer.on('ready', ()=> {
 
     configObject = configObjectFactory(SERVICE_NAME);
-    configService = configServiceFactory(configObject);
-    configCtrl = configCtrlFactory(configService, kafkaService);
-
-    kafkaService.subscribe('get-config-response', configCtrl.writeConfig);
-    kafkaService.send('get-config-request', configObject);
+    configObject.init().then(
+        (config) => {
+            configService = configServiceFactory(config);
+            configCtrl = configCtrlFactory(configService, kafkaService);
+            kafkaService.subscribe('get-config-response', configCtrl.writeConfig);
+            kafkaService.send('get-config-request', configObject);
+        },
+        (error) => {
+            console.log(JSON.stringify(error));
+        }
+    );
 
     configCtrl.on('ready', () => {
         dbConfig = configService.read(SERVICE_NAME, 'db');
