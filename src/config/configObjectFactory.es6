@@ -11,7 +11,8 @@ module.exports = (serviceName) => {
     configObject.serviceName = serviceName;
 
     hostName = os.hostname();
-    configObject.serviceIP = dns.lookup(hostName);
-
-    return configObject;
+    dns.lookup(hostName, {family: 4},(err, address, family) => {
+        configObject.serviceIP = address;
+        return configObject;
+    });
 };
