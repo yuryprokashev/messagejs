@@ -10,8 +10,14 @@ module.exports = (configService, kafkaService) => {
         let context, query, data;
         debugger;
         context = kafkaService.extractContext(kafkaMessage);
-        configService.write(context.response);
-        configCtrl.emit('ready');
+        if(context !== null) {
+            configService.write(context.response);
+            configCtrl.emit('ready');
+        }
+        else {
+            configCtrl.emit('error', {error: 'kafkaMessage.value is null'})
+        }
+
     };
 
     return configCtrl;

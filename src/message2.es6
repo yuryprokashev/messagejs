@@ -66,6 +66,9 @@ kafkaBus.producer.on('ready', ()=> {
                 kafkaListeners = configService.read(SERVICE_NAME, 'kafkaListeners');
                 kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
             });
+            configCtrl.on('error', (args) => {
+                console.log(args);
+            });
         },
         (error) => {
             console.log(JSON.stringify(error));
