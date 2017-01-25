@@ -8,6 +8,7 @@ module.exports = (configService, kafkaService) => {
 
     configCtrl.writeConfig = (kafkaMessage) => {
         let context, query, data;
+        debugger;
         context = kafkaService.extractContext(kafkaMessage);
         configService.write(context.response);
         configCtrl.emit('ready');

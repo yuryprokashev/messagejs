@@ -13,6 +13,7 @@ module.exports = (serviceName) => {
     hostName = os.hostname();
     dns.lookup(hostName, {family: 4},(err, address, family) => {
         configObject.serviceIP = address;
+        console.log(`configObject is ${JSON.stringify(configObject)}`);
         return configObject;
     });
 };
