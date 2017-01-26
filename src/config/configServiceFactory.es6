@@ -4,17 +4,24 @@
 'use strict';
 module.exports = configObject => {
     let configService = {};
+    let config;
+
+    config = configObject;
 
     configService.read = (serviceName, propertyName) => {
 
-        if(configObject !== undefined) {
-            return configObject;
-        }
-        else if(serviceName !== undefined && configObject[serviceName] !== undefined) {
-            return configObject[serviceName];
-        }
-        else if(propertyName !== undefined && configObject[serviceName][propertyName] !== undefined) {
-            return configObject[serviceName][propertyName];
+        if(config !== undefined) {
+            if(serviceName !== undefined && config[serviceName] !== undefined) {
+                if(propertyName !== undefined && config[serviceName][propertyName] !== undefined) {
+                    return config[serviceName][propertyName];
+                }
+                else {
+                    return config[serviceName];
+                }
+            }
+            else {
+                return config;
+            }
         }
         else {
             return null;
@@ -22,7 +29,7 @@ module.exports = configObject => {
     };
 
     configService.write = (configData) => {
-        configObject = configData;
+        config = configData;
     };
     return configService;
 };
