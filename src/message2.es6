@@ -70,8 +70,8 @@ kafkaBus.producer.on('ready', ()=> {
                 console.log(args);
             });
         },
-        (error) => {
-            console.log(JSON.stringify(error));
+        (err) => {
+            console.log(`ConfigObject Promise rejected ${JSON.stringify(err.error)}`);
         }
     );
 
