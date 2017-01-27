@@ -1,6 +1,7 @@
 /**
- *Created by py on 27/11/2016
+ *Created by py on 24/01/2017
  */
+
 "use strict";
 const SERVICE_NAME = 'messagejs';
 
@@ -14,22 +15,28 @@ let kafkaHost = (function(bool){
     return result;
 })(args[0].isProd);
 
-const dbFactory = require('./dbFactory.es6')
+const dbFactory = require('./dbFactory.es6');
 const kafkaBusFactory = require('my-kafka').kafkaBusFactory;
 const kafkaServiceFactory = require('my-kafka').kafkaServiceFactory;
-const configFactory = require('./configFactory.es6');
+
+const configObjectFactory = require('my-config').configObjectFactory;
+const configServiceFactory = require('my-config').configServiceFactory;
+const configCtrlFactory = require('my-config').configCtrlFactory;
+
 const messageCtrlFactory = require('./messageCtrlFactory.es6');
 const messageServiceFactory = require('./messageServiceFactory.es6');
 const buildMongoConStr = require('./helpers/buildConnString.es6');
 
 let kafkaBus,
-    db;
+    db,
+    configObject;
 
 let kafkaService,
     configService,
     messageService;
 
-let messageCtrl;
+let messageCtrl,
+    configCtrl;
 
 let dbConfig,
     dbConnectStr,
@@ -40,18 +47,31 @@ kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME);
 kafkaService = kafkaServiceFactory(kafkaBus);
 
 kafkaBus.producer.on('ready', ()=> {
-    configService = configFactory(kafkaService);
-    configService.on('ready', ()=>{
-        dbConfig = configService.get(SERVICE_NAME).db;
 
-        dbConnectStr = buildMongoConStr(dbConfig);
-        db = dbFactory(dbConnectStr);
+    configObject = configObjectFactory(SERVICE_NAME);
+    configObject.init().then(
+        (config) => {
+            configService = configServiceFactory(config);
+            configCtrl = configCtrlFactory(configService, kafkaService);
+            kafkaService.subscribe('get-config-response', configCtrl.writeConfig);
+            kafkaService.send('get-config-request', configObject);
+            configCtrl.on('ready', () => {
+                dbConfig = configService.read(SERVICE_NAME, 'db');
+                dbConnectStr = buildMongoConStr(dbConfig);
+                db = dbFactory(dbConnectStr);
 
-        messageService = messageServiceFactory(db);
-        messageCtrl = messageCtrlFactory(messageService,  kafkaService);
+                messageService = messageServiceFactory(db);
+                messageCtrl = messageCtrlFactory(messageService, kafkaService);
 
-        kafkaListeners = configService.get(SERVICE_NAME).kafkaListeners;
-
-        kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
-    });
+                kafkaListeners = configService.read(SERVICE_NAME, 'kafkaListeners');
+                kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
+            });
+            configCtrl.on('error', (args) => {
+                console.log(args);
+            });
+        },
+        (err) => {
+            console.log(`ConfigObject Promise rejected ${JSON.stringify(err.error)}`);
+        }
+    );
 });
