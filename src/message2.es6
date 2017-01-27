@@ -19,9 +19,9 @@ const dbFactory = require('./dbFactory.es6');
 const kafkaBusFactory = require('my-kafka').kafkaBusFactory;
 const kafkaServiceFactory = require('my-kafka').kafkaServiceFactory;
 
-const configObjectFactory = require('./config/configObjectFactory.es6');
-const configServiceFactory = require('./config/configServiceFactory.es6');
-const configCtrlFactory = require('./config/configCtrlFactory.es6');
+const configObjectFactory = require('my-config').configObjectFactory;
+const configServiceFactory = require('my-config').configServiceFactory;
+const configCtrlFactory = require('my-config').configCtrlFactory;
 
 const messageCtrlFactory = require('./messageCtrlFactory.es6');
 const messageServiceFactory = require('./messageServiceFactory.es6');
@@ -74,21 +74,4 @@ kafkaBus.producer.on('ready', ()=> {
             console.log(`ConfigObject Promise rejected ${JSON.stringify(err.error)}`);
         }
     );
-
-
-
-    // configService = configFactory(kafkaService);
-    // configService.on('ready', ()=>{
-    //     dbConfig = configService.get(SERVICE_NAME).db;
-    //
-    //     dbConnectStr = buildMongoConStr(dbConfig);
-    //     db = dbFactory(dbConnectStr);
-    //
-    //     messageService = messageServiceFactory(db);
-    //     messageCtrl = messageCtrlFactory(messageService,  kafkaService);
-    //
-    //     kafkaListeners = configService.get(SERVICE_NAME).kafkaListeners;
-    //
-    //     kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
-    // });
 });

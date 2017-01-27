@@ -11,6 +11,7 @@
   "dependencies": {
     "kafka-node": "^0.5.4",
     "mongoose": "^4.5.8",
+    "my-config": "file:../shared/myConfig",
     "my-kafka": "file:../shared/myKafka"
   },
   "devDependencies": {
