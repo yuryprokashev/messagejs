@@ -53,7 +53,7 @@ kafkaBus.producer.on('ready', ()=> {
         (config) => {
             configService = configServiceFactory(config);
             configCtrl = configCtrlFactory(configService, kafkaService);
-            kafkaService.subscribe('get-config-response', configCtrl.writeConfig);
+            kafkaService.subscribe('get-config-response', true, configCtrl.writeConfig);
             kafkaService.send('get-config-request', configObject);
             configCtrl.on('ready', () => {
                 dbConfig = configService.read(SERVICE_NAME, 'db');
@@ -64,7 +64,7 @@ kafkaBus.producer.on('ready', ()=> {
                 messageCtrl = messageCtrlFactory(messageService, kafkaService);
 
                 kafkaListeners = configService.read(SERVICE_NAME, 'kafkaListeners');
-                kafkaService.subscribe(kafkaListeners.createMessage, messageCtrl.createMessage);
+                kafkaService.subscribe(kafkaListeners.createMessage, false, messageCtrl.createMessage);
             });
             configCtrl.on('error', (args) => {
                 console.log(args);
