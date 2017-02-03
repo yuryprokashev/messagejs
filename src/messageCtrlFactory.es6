@@ -2,11 +2,16 @@
  *Created by py on 27/11/2016
  */
 "use strict";
-module.exports = (messageService, kafkaService) => {
+module.exports = (messageService, configService, kafkaService) => {
 
     let messageCtrl = {};
 
-    messageCtrl.createMessage = (kafkaMessage) => {
+    let kafkaListeners,
+        isSignedRequest;
+
+    let createMessage;
+
+    createMessage = kafkaMessage => {
         let context, query, data;
 
         context = kafkaService.extractContext(kafkaMessage);
@@ -24,6 +29,12 @@ module.exports = (messageService, kafkaService) => {
             }
         )
     };
+
+
+
+    kafkaListeners = configService.read('messagejs.kafkaListeners');
+    isSignedRequest = false;
+    kafkaService.subscribe(kafkaListeners.createMessage, isSignedRequest, createMessage);
 
 
     return messageCtrl;
