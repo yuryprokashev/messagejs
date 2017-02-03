@@ -12,20 +12,21 @@ module.exports = (messageService, configService, kafkaService) => {
     let createMessage;
 
     createMessage = kafkaMessage => {
-        let context, query, data;
+        let context, query, data, signRequest;
 
         context = kafkaService.extractContext(kafkaMessage);
         query = kafkaService.extractQuery(kafkaMessage);
         data = kafkaService.extractWriteData(kafkaMessage);
+        signRequest = false;
 
         messageService.create(query, data).then(
             (result) => {
                 context.response = result;
-                kafkaService.send(makeResponseTopic(kafkaMessage), context);
+                kafkaService.send(makeResponseTopic(kafkaMessage), signRequest, context);
             },
             (error) => {
                 context.response = error;
-                kafkaService.send(makeResponseTopic(kafkaMessage), context);
+                kafkaService.send(makeResponseTopic(kafkaMessage), signRequest, context);
             }
         )
     };
