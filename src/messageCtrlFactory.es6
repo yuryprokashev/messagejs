@@ -7,7 +7,7 @@ module.exports = (messageService, configService, kafkaService) => {
     let messageCtrl = {};
 
     let kafkaListeners,
-        isSignedRequest;
+        isSignedMessage;
 
     let createMessage;
 
@@ -31,12 +31,11 @@ module.exports = (messageService, configService, kafkaService) => {
         )
     };
 
-
-
     kafkaListeners = configService.read('messagejs.kafkaListeners');
-    isSignedRequest = false;
-    kafkaService.subscribe(kafkaListeners.createMessage, isSignedRequest, createMessage);
-
+    isSignedMessage = false;
+    if(kafkaListeners !== undefined) {
+        kafkaService.subscribe(kafkaListeners.createMessage, isSignedMessage, createMessage);
+    }
 
     return messageCtrl;
 };
