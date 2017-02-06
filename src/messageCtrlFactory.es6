@@ -6,35 +6,32 @@ module.exports = (messageService, configService, kafkaService) => {
 
     let messageCtrl = {};
 
-    let kafkaListeners,
-        isSignedMessage;
+    let kafkaListeners;
 
     let createMessage;
 
     createMessage = kafkaMessage => {
-        let context, query, data, signRequest;
+        let context, query, data;
 
         context = kafkaService.extractContext(kafkaMessage);
         query = kafkaService.extractQuery(kafkaMessage);
         data = kafkaService.extractWriteData(kafkaMessage);
-        signRequest = false;
 
         messageService.create(query, data).then(
             (result) => {
                 context.response = result;
-                kafkaService.send(makeResponseTopic(kafkaMessage), signRequest, context);
+                kafkaService.send(makeResponseTopic(kafkaMessage), context);
             },
             (error) => {
                 context.response = error;
-                kafkaService.send(makeResponseTopic(kafkaMessage), signRequest, context);
+                kafkaService.send(makeResponseTopic(kafkaMessage), context);
             }
         )
     };
 
     kafkaListeners = configService.read('messagejs.kafkaListeners');
-    isSignedMessage = false;
     if(kafkaListeners !== undefined) {
-        kafkaService.subscribe(kafkaListeners.createMessage, isSignedMessage, createMessage);
+        kafkaService.subscribe(kafkaListeners.createMessage, createMessage);
     }
 
     return messageCtrl;
