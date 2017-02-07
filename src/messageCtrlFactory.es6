@@ -20,11 +20,11 @@ module.exports = (messageService, configService, kafkaService) => {
         messageService.create(query, data).then(
             (result) => {
                 context.response = result;
-                kafkaService.send(makeResponseTopic(kafkaMessage), context);
+                kafkaService.send(kafkaService.makeResponseTopic(kafkaMessage), context);
             },
             (error) => {
                 context.response = error;
-                kafkaService.send(makeResponseTopic(kafkaMessage), context);
+                kafkaService.send(kafkaService.makeResponseTopic(kafkaMessage), context);
             }
         )
     };
