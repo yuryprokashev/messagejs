@@ -15,7 +15,11 @@ let kafkaHost = (function(bool){
     return result;
 })(args[0].isProd);
 
+const EventEmitter = require('events').EventEmitter;
+
 const dbFactory = require('./dbFactory.es6');
+const loggerAgentFactory = require('my-logger').loggerAgentFactory;
+
 const kafkaBusFactory = require('my-kafka').kafkaBusFactory;
 const kafkaServiceFactory = require('my-kafka').kafkaServiceFactory;
 
@@ -36,40 +40,39 @@ let kafkaService,
     messageService;
 
 let messageCtrl,
-    configCtrl;
+    configCtrl,
+    loggerAgent;
 
 let dbConfig,
     dbConnectStr;
 
-let bootstrapComponents,
-    handleError;
+let bootstrapComponents;
 
 bootstrapComponents = () => {
-    configObject = configObjectFactory(SERVICE_NAME);
-    configService = configServiceFactory(configObject);
-    configCtrl = configCtrlFactory(configService, kafkaService);
+
+    configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
+    configService = configServiceFactory(configObject, EventEmitter);
+    configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
+
+    loggerAgent.listenLoggerEventsIn([configCtrl, configService, configObject]);
 
     configCtrl.on('ready', () => {
         dbConfig = configService.read(`${SERVICE_NAME}.db`);
         dbConnectStr = buildMongoConStr(dbConfig);
-        db = dbFactory(dbConnectStr);
+        db = dbFactory(dbConnectStr, EventEmitter);
 
-        messageService = messageServiceFactory(db);
-        messageCtrl = messageCtrlFactory(messageService, configService, kafkaService);
+        messageService = messageServiceFactory(db, EventEmitter);
+        messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
+
+        loggerAgent.listenLoggerEventsIn([db, messageService, messageCtrl]);
     });
-    configCtrl.on('error', (args) => {
-        handleError(args);
-    });
-
-};
-
-handleError = (err) => {
-    //TODO. Implement centralized error logging.
-    console.log(err);
 };
 
 
-kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME);
-kafkaService = kafkaServiceFactory(kafkaBus);
+kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
+kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
+
+loggerAgent = loggerAgentFactory(kafkaService, EventEmitter);
+loggerAgent.listenLoggerEventsIn([kafkaBus, kafkaService]);
 
 kafkaBus.producer.on('ready', bootstrapComponents);

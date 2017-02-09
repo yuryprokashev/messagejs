@@ -3,10 +3,10 @@
  */
 "use strict";
 
-module.exports = db => {
+module.exports = (db, EventEmitter) => {
     let Message = db.model("Message", require('./messageSchema.es6'), 'messages');
     const guid = require('./helpers/guid.es6');
-    const messageService = {};
+    const messageService = new EventEmitter();
     messageService.create = (query, data) => {
         return new Promise(
             (resolve, reject) => {
@@ -22,8 +22,10 @@ module.exports = db => {
                         commandId: data.commandId
                     },
                     (err, result) => {
-                        if(err){ return reject({error: err});}
-                        // console.log(result);
+                        if(err){
+                            let logMessage = messageService.packLogMessage(this, `failed to create message\n${err}`);
+                            return reject(logMessage);
+                        }
                         resolve(result);
                     }
                 )
