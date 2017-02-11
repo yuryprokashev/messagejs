@@ -6,23 +6,25 @@ const Mongoose = require('mongoose');
 
 module.exports = (dbURL, EventEmitter) => {
 
-    let connection = Mongoose.connect(dbURL);
+    let db = new EventEmitter();
+
+    db.connection = Mongoose.connect(dbURL);
+
     Mongoose.connection.on('connected',()=>{
-        connection.emit('connected');
+        db.emit('connected', `mongoose connected to ${dbURL}`);
     });
     Mongoose.connection.on('error', ()=>{
         let error = new Error(`mongoose failed to connect to ${dbURL}`);
-        connection.emit('error', error);
+        db.emit('error', error);
     });
     Mongoose.connection.on('disconnected', ()=>{
-        connection.emit('disconnected', {message: `disconnected from ${dbURL}`});
+        db.emit('disconnected', `mongoose disconnected from ${dbURL}`);
     });
     process.on('SIGINT', ()=>{
         Mongoose.connection.close(()=>{
-            console.log('close db connection due to node app exit');
-            connection.emit('close', {message: 'connection closed due to SIGINT'});
+            db.emit('close', 'connection closed due to SIGINT');
             process.exit(0);
         });
     });
-    return connection;
+    return db;
 };

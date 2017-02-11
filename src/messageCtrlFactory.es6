@@ -61,21 +61,31 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
             messageCtrl.emit('logger.agent.error', error);
         }
 
+        kafkaService.on('log', (messageString) => {
+            messageCtrl.emit('logger.agent.log', 'kafkaService', messageString);
+        });
+
         kafkaService.on('error', (err) => {
             messageCtrl.emit('logger.agent.error', err);
+        });
+
+        messageService.on('log', (messageString) => {
+            messageCtrl.emit('logger.agent.log', 'messageService', messageString);
         });
 
         messageService.on('error', (err) => {
             messageCtrl.emit('logger.agent.error', err);
         });
 
+        configService.on('log', (messageString) => {
+            messageCtrl.emit('logger.agent.log', 'configService', messageString);
+        });
+
         configService.on('error', (err) => {
             messageCtrl.emit('logger.agent.error', err);
         });
 
-        kafkaService.on('log', (messageString) => {
-            messageCtrl.emit('logger.agent.log', messageString);
-        });
+
     };
 
     return messageCtrl;

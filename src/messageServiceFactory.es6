@@ -4,7 +4,7 @@
 "use strict";
 
 module.exports = (db, EventEmitter) => {
-    let Message = db.model("Message", require('./messageSchema.es6'), 'messages');
+    let Message = db.connection.model("Message", require('./messageSchema.es6'), 'messages');
     const guid = require('./helpers/guid.es6');
     const messageService = new EventEmitter();
     messageService.create = (query, data) => {
@@ -37,6 +37,15 @@ module.exports = (db, EventEmitter) => {
         db.on('error', (error) => {
             messageService.emit('error', error);
         });
+        db.on('connected', (messageString)=> {
+            messageService.emit('log', messageString);
+        });
+        db.on('disconnected', (messageString) => {
+            messageService.emit('log', messageString);
+        });
+        db.on('close', (messageString) => {
+            messageService.emit('log', messageString);
+        })
     };
 
     return messageService;
