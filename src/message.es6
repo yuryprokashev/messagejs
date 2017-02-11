@@ -51,11 +51,10 @@ let bootstrapComponents;
 bootstrapComponents = () => {
 
     configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
-
     configService = configServiceFactory(configObject, EventEmitter);
     configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
 
-    loggerAgent.listenLoggerEventsIn([configCtrl, configService, configObject]);
+    loggerAgent.listenLoggerEventsIn([configCtrl]);
 
     configCtrl.start();
 
