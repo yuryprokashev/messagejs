@@ -16,23 +16,20 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
         isValidData = true;
 
         context = kafkaService.extractContext(kafkaMessage);
-        if(context.error !== undefined) {
-            let logMessage = messageCtrl.packLogMessage(this, `${context}`);
-            messageCtrl.emit('logger.agent.error', logMessage);
+        if(context instanceof Error) {
+            messageCtrl.emit('logger.agent.error', context);
             isValidData = false;
         }
 
         query = kafkaService.extractQuery(kafkaMessage);
-        if(query.error !== undefined) {
-            let logMessage = messageCtrl.packLogMessage(this, `${context}`);
-            messageCtrl.emit('logger.agent.error', logMessage);
+        if(query instanceof Error) {
+            messageCtrl.emit('logger.agent.error', query);
             isValidData = false;
         }
 
         data = kafkaService.extractWriteData(kafkaMessage);
-        if(data.error !== undefined) {
-            let logMessage = messageCtrl.packLogMessage(this, `${context}`);
-            messageCtrl.emit('logger.agent.error', logMessage);
+        if(data instanceof Error) {
+            messageCtrl.emit('logger.agent.error', data);
             isValidData = false;
         }
 
@@ -54,14 +51,32 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
 
     };
 
-    kafkaListeners = configService.read('messagejs.kafkaListeners');
-    if(kafkaListeners !== undefined) {
-        kafkaService.subscribe(kafkaListeners.createMessage, createMessage);
-    }
-    else {
-        let logMessage = messageCtrl.packLogMessage(this, 'kafkaListeners undefined');
-        messageCtrl.emit('logger.agent.error', logMessage);
-    }
+    messageCtrl.start = () => {
+        kafkaListeners = configService.read('messagejs.kafkaListeners');
+        if(kafkaListeners !== undefined) {
+            kafkaService.subscribe(kafkaListeners.createMessage, createMessage);
+        }
+        else {
+            let error = new Error('kafkaListeners undefined');
+            messageCtrl.emit('logger.agent.error', error);
+        }
+
+        kafkaService.on('error', (err) => {
+            messageCtrl.emit('logger.agent.error', err);
+        });
+
+        messageService.on('error', (err) => {
+            messageCtrl.emit('logger.agent.error', err);
+        });
+
+        configService.on('error', (err) => {
+            messageCtrl.emit('logger.agent.error', err);
+        });
+
+        kafkaService.on('log', (messageString) => {
+            messageCtrl.emit('logger.agent.log', messageString);
+        });
+    };
 
     return messageCtrl;
 };

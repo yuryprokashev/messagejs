@@ -23,8 +23,8 @@ module.exports = (db, EventEmitter) => {
                     },
                     (err, result) => {
                         if(err){
-                            let logMessage = messageService.packLogMessage(this, `failed to create message\n${err}`);
-                            return reject(logMessage);
+                            let error = new Error(`failed to create message\n${err}`);
+                            return reject(error);
                         }
                         resolve(result);
                     }
@@ -32,5 +32,12 @@ module.exports = (db, EventEmitter) => {
             }
         );
     };
+
+    messageService.start = () => {
+        db.on('error', (error) => {
+            messageService.emit('error', error);
+        });
+    };
+
     return messageService;
 };

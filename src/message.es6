@@ -57,6 +57,8 @@ bootstrapComponents = () => {
 
     loggerAgent.listenLoggerEventsIn([configCtrl, configService, configObject]);
 
+    configCtrl.start();
+
     configCtrl.on('ready', () => {
         dbConfig = configService.read(`${SERVICE_NAME}.db`);
         dbConnectStr = buildMongoConStr(dbConfig);
@@ -65,7 +67,8 @@ bootstrapComponents = () => {
         messageService = messageServiceFactory(db, EventEmitter);
         messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
 
-        loggerAgent.listenLoggerEventsIn([db, messageService, messageCtrl]);
+        loggerAgent.listenLoggerEventsIn([messageCtrl]);
+        messageCtrl.start();
     });
 };
 
@@ -74,6 +77,5 @@ kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
 kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
 
 loggerAgent = loggerAgentFactory(kafkaService, EventEmitter);
-loggerAgent.listenLoggerEventsIn([kafkaBus, kafkaService]);
 
 kafkaBus.producer.on('ready', bootstrapComponents);
