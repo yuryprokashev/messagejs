@@ -67,6 +67,7 @@ bootstrapComponents = () => {
         messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
 
         loggerAgent.listenLoggerEventsIn([messageCtrl]);
+        messageService.start();
         messageCtrl.start();
     });
 };
