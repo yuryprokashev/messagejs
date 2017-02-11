@@ -84,6 +84,7 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
         configService.on('error', (err) => {
             messageCtrl.emit('logger.agent.error', err);
         });
+        messageCtrl.emit('logger.agent.log', 'messageCtrl.start', 'messageCtrl started');
 
 
     };
