@@ -53,12 +53,12 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
 
     messageCtrl.start = () => {
         kafkaListeners = configService.read('messagejs.kafkaListeners');
-        if(kafkaListeners !== undefined) {
-            kafkaService.subscribe(kafkaListeners.createMessage, createMessage);
-        }
-        else {
+        if(kafkaListeners instanceof Error) {
             let error = new Error('kafkaListeners undefined');
             messageCtrl.emit('logger.agent.error', error);
+        }
+        else {
+            kafkaService.subscribe(kafkaListeners.createMessage, createMessage);
         }
 
         kafkaService.on('log', (messageString) => {
@@ -85,8 +85,6 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
             messageCtrl.emit('logger.agent.error', err);
         });
         messageCtrl.emit('logger.agent.log', 'messageCtrl.start', 'messageCtrl started');
-
-
     };
 
     return messageCtrl;

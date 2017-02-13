@@ -37,15 +37,9 @@ module.exports = (db, EventEmitter) => {
         db.on('error', (error) => {
             messageService.emit('error', error);
         });
-        db.on('connected', (messageString)=> {
+        db.on('log', (messageString)=> {
             messageService.emit('log', messageString);
         });
-        db.on('disconnected', (messageString) => {
-            messageService.emit('log', messageString);
-        });
-        db.on('close', (messageString) => {
-            messageService.emit('log', messageString);
-        })
     };
 
     return messageService;

@@ -11,18 +11,18 @@ module.exports = (dbURL, EventEmitter) => {
     db.connection = Mongoose.connect(dbURL);
 
     Mongoose.connection.on('connected',()=>{
-        db.emit('connected', `mongoose connected to ${dbURL}`);
+        db.emit('log', `mongoose connected to ${dbURL}`);
     });
     Mongoose.connection.on('error', ()=>{
         let error = new Error(`mongoose failed to connect to ${dbURL}`);
         db.emit('error', error);
     });
     Mongoose.connection.on('disconnected', ()=>{
-        db.emit('disconnected', `mongoose disconnected from ${dbURL}`);
+        db.emit('log', `mongoose disconnected from ${dbURL}`);
     });
     process.on('SIGINT', ()=>{
         Mongoose.connection.close(()=>{
-            db.emit('close', 'connection closed due to SIGINT');
+            db.emit('log', 'connection closed due to SIGINT');
             process.exit(0);
         });
     });
