@@ -46,36 +46,44 @@ let messageCtrl,
 let dbConfig,
     dbConnectStr;
 
-let bootstrapComponents;
+let startKafka,
+    startConfig,
+    startLogic,
+    startMessageApp;
 
-bootstrapComponents = () => {
+startKafka = () => {
+    kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
+    kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
+    loggerAgent = loggerAgentFactory(kafkaService, EventEmitter);
+    kafkaBus.producer.on('ready', startConfig);
+};
 
+startConfig = () => {
     configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
     configService = configServiceFactory(configObject, EventEmitter);
     configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
-
     loggerAgent.listenLoggerEventsIn([configCtrl]);
-
     configCtrl.start();
-
-    configCtrl.on('ready', () => {
-        dbConfig = configService.read(`${SERVICE_NAME}.db`);
-        dbConnectStr = buildMongoConStr(dbConfig);
-        db = dbFactory(dbConnectStr, EventEmitter);
-
-        messageService = messageServiceFactory(db, EventEmitter);
-        messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
-
-        loggerAgent.listenLoggerEventsIn([messageCtrl]);
-        messageService.start();
-        messageCtrl.start();
-    });
+    configCtrl.on('ready', startLogic);
 };
 
+startLogic = () => {
+    startMessageApp();
+};
 
-kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
-kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
+startMessageApp = () => {
+    dbConfig = configService.read(`${SERVICE_NAME}.db`);
+    dbConnectStr = buildMongoConStr(dbConfig);
+    db = dbFactory(dbConnectStr, EventEmitter);
+    messageService = messageServiceFactory(db, EventEmitter);
+    messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
+    loggerAgent.listenLoggerEventsIn([messageCtrl]);
+    messageService.start();
+    messageCtrl.start();
+};
 
-loggerAgent = loggerAgentFactory(kafkaService, EventEmitter);
+startKafka();
 
-kafkaBus.producer.on('ready', bootstrapComponents);
+
+
+
