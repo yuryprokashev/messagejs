@@ -72,7 +72,7 @@ startLogic = () => {
 };
 
 startMessageApp = () => {
-    dbConfig = configService.read(`${SERVICE_NAME}.db`);
+    dbConfig = configService.read(`${SERVICE_NAME}.dbs`);
     dbConnectStr = buildMongoConStr(dbConfig);
     db = dbFactory(dbConnectStr, EventEmitter);
     messageService = messageServiceFactory(db, EventEmitter);
