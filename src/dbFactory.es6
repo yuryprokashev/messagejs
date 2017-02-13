@@ -15,7 +15,6 @@ module.exports = (dbURL, EventEmitter) => {
     });
     Mongoose.connection.on('error', ()=>{
         let error = new Error(`mongoose failed to connect to ${dbURL}`);
-        console.log(`dbFactory: ${error.fileName} at ${error.lineNumber}`);
         db.emit('error', error);
     });
     Mongoose.connection.on('disconnected', ()=>{

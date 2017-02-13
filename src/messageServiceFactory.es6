@@ -35,7 +35,6 @@ module.exports = (db, EventEmitter) => {
 
     messageService.start = () => {
         db.on('error', (error) => {
-            console.log(`messageService: ${error.fileName} at ${error.lineNumber}`);
             messageService.emit('error', error);
         });
         db.on('log', (messageString)=> {

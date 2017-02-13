@@ -74,7 +74,6 @@ module.exports = (messageService, configService, kafkaService, EventEmitter) => 
         });
 
         messageService.on('error', (error) => {
-            console.log(`messageCtrl: ${error.fileName} at ${error.lineNumber}`);
             messageCtrl.emit('logger.agent.error', error);
         });
 

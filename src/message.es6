@@ -54,7 +54,7 @@ let startKafka,
 startKafka = () => {
     kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
     kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
-    loggerAgent = loggerAgentFactory(kafkaService, EventEmitter);
+    loggerAgent = loggerAgentFactory(SERVICE_NAME, kafkaService, EventEmitter);
     kafkaBus.producer.on('ready', startConfig);
 };
 
@@ -72,7 +72,7 @@ startLogic = () => {
 };
 
 startMessageApp = () => {
-    dbConfig = configService.read(`${SERVICE_NAME}.dbs`);
+    dbConfig = configService.read(`${SERVICE_NAME}.db`);
     dbConnectStr = buildMongoConStr(dbConfig);
     db = dbFactory(dbConnectStr, EventEmitter);
     messageService = messageServiceFactory(db, EventEmitter);
