@@ -52,15 +52,19 @@ let startKafka,
     startMessageApp;
 
 startKafka = () => {
-    console.log(`before startKafka MEM: ${JSON.stringify(process.memoryUsage())}`);
+    console.log(`startKafka`);
     kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
     kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
     loggerAgent = loggerAgentFactory(SERVICE_NAME, kafkaService, EventEmitter);
     kafkaBus.producer.on('ready', startConfig);
 };
 
+setInterval(() => {
+    console.log(`MEM: ${JSON.stringify(process.memoryUsage())}`);
+}, 500);
+
 startConfig = () => {
-    console.log(`before startConfig MEM: ${JSON.stringify(process.memoryUsage())}`);
+    console.log(`startConfig`);
     configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
     configService = configServiceFactory(configObject, EventEmitter);
     configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
@@ -75,7 +79,7 @@ startLogic = () => {
 };
 
 startMessageApp = () => {
-    console.log(`before startMessageApp MEM: ${JSON.stringify(process.memoryUsage())}`);
+    console.log(`startMessageApp`);
     dbConfig = configService.read(`${SERVICE_NAME}.db`);
     dbConnectStr = buildMongoConStr(dbConfig);
     db = dbFactory(dbConnectStr, EventEmitter);
@@ -84,7 +88,6 @@ startMessageApp = () => {
     loggerAgent.listenLoggerEventsIn([messageCtrl]);
     messageService.start();
     messageCtrl.start();
-    console.log(`after ${this.name} MEM: ${JSON.stringify(process.memoryUsage())}`);
 };
 
 startKafka();
