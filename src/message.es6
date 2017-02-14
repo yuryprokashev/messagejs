@@ -64,13 +64,13 @@ setInterval(() => {
 }, 500);
 
 startConfig = () => {
-    // console.log(`startConfig`);
-    // configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
-    // configService = configServiceFactory(configObject, EventEmitter);
-    // configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
-    // loggerAgent.listenLoggerEventsIn([configCtrl]);
-    // configCtrl.on('ready', startLogic);
-    // configCtrl.start();
+    console.log(`startConfig`);
+    configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
+    configService = configServiceFactory(configObject, EventEmitter);
+    configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
+    loggerAgent.listenLoggerEventsIn([configCtrl]);
+    configCtrl.on('ready', startLogic);
+    configCtrl.start();
 
 };
 
@@ -79,15 +79,15 @@ startLogic = () => {
 };
 
 startMessageApp = () => {
-    console.log(`startMessageApp`);
-    dbConfig = configService.read(`${SERVICE_NAME}.db`);
-    dbConnectStr = buildMongoConStr(dbConfig);
-    db = dbFactory(dbConnectStr, EventEmitter);
-    messageService = messageServiceFactory(db, EventEmitter);
-    messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
-    loggerAgent.listenLoggerEventsIn([messageCtrl]);
-    messageService.start();
-    messageCtrl.start();
+    // console.log(`startMessageApp`);
+    // dbConfig = configService.read(`${SERVICE_NAME}.db`);
+    // dbConnectStr = buildMongoConStr(dbConfig);
+    // db = dbFactory(dbConnectStr, EventEmitter);
+    // messageService = messageServiceFactory(db, EventEmitter);
+    // messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
+    // loggerAgent.listenLoggerEventsIn([messageCtrl]);
+    // messageService.start();
+    // messageCtrl.start();
 };
 
 startKafka();
