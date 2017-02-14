@@ -64,13 +64,13 @@ setInterval(() => {
 }, 500);
 
 startConfig = () => {
-    console.log(`startConfig`);
-    configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
-    configService = configServiceFactory(configObject, EventEmitter);
-    configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
-    loggerAgent.listenLoggerEventsIn([configCtrl]);
-    configCtrl.on('ready', startLogic);
-    configCtrl.start();
+    // console.log(`startConfig`);
+    // configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
+    // configService = configServiceFactory(configObject, EventEmitter);
+    // configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
+    // loggerAgent.listenLoggerEventsIn([configCtrl]);
+    // configCtrl.on('ready', startLogic);
+    // configCtrl.start();
 
 };
 
