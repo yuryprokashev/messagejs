@@ -52,6 +52,7 @@ let startKafka,
     startMessageApp;
 
 startKafka = () => {
+    console.log(`before startKafka MEM: ${process.memoryUsage()}`);
     kafkaBus = kafkaBusFactory(kafkaHost, SERVICE_NAME, EventEmitter);
     kafkaService = kafkaServiceFactory(kafkaBus, EventEmitter);
     loggerAgent = loggerAgentFactory(SERVICE_NAME, kafkaService, EventEmitter);
@@ -59,6 +60,7 @@ startKafka = () => {
 };
 
 startConfig = () => {
+    console.log(`before startConfig MEM: ${process.memoryUsage()}`);
     configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
     configService = configServiceFactory(configObject, EventEmitter);
     configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
@@ -72,6 +74,7 @@ startLogic = () => {
 };
 
 startMessageApp = () => {
+    console.log(`before startMessageApp MEM: ${process.memoryUsage()}`);
     dbConfig = configService.read(`${SERVICE_NAME}.db`);
     dbConnectStr = buildMongoConStr(dbConfig);
     db = dbFactory(dbConnectStr, EventEmitter);
@@ -80,6 +83,7 @@ startMessageApp = () => {
     loggerAgent.listenLoggerEventsIn([messageCtrl]);
     messageService.start();
     messageCtrl.start();
+    console.log(`after startMessageApp MEM: ${process.memoryUsage()}`);
 };
 
 startKafka();
