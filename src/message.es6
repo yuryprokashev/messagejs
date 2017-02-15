@@ -59,9 +59,9 @@ startKafka = () => {
     kafkaBus.producer.on('ready', startConfig);
 };
 
-setInterval(() => {
-    console.log(`MEM: ${JSON.stringify(process.memoryUsage())}`);
-}, 500);
+// setInterval(() => {
+//     console.log(`MEM: ${JSON.stringify(process.memoryUsage())}`);
+// }, 500);
 
 startConfig = () => {
     console.log(`startConfig`);
@@ -79,15 +79,15 @@ startLogic = () => {
 };
 
 startMessageApp = () => {
-    // console.log(`startMessageApp`);
-    // dbConfig = configService.read(`${SERVICE_NAME}.db`);
-    // dbConnectStr = buildMongoConStr(dbConfig);
-    // db = dbFactory(dbConnectStr, EventEmitter);
-    // messageService = messageServiceFactory(db, EventEmitter);
-    // messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
-    // loggerAgent.listenLoggerEventsIn([messageCtrl]);
-    // messageService.start();
-    // messageCtrl.start();
+    console.log(`startMessageApp`);
+    dbConfig = configService.read(`${SERVICE_NAME}.db`);
+    dbConnectStr = buildMongoConStr(dbConfig);
+    db = dbFactory(dbConnectStr, EventEmitter);
+    messageService = messageServiceFactory(db, EventEmitter);
+    messageCtrl = messageCtrlFactory(messageService, configService, kafkaService, EventEmitter);
+    loggerAgent.listenLoggerEventsIn([messageCtrl]);
+    messageService.start();
+    messageCtrl.start();
 };
 
 startKafka();
