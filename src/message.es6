@@ -68,7 +68,7 @@ startConfig = () => {
     configObject = configObjectFactory(SERVICE_NAME, EventEmitter);
     configService = configServiceFactory(configObject, EventEmitter);
     configCtrl = configCtrlFactory(configService, kafkaService, EventEmitter);
-    // loggerAgent.listenLoggerEventsIn([configCtrl]);
+    loggerAgent.listenLoggerEventsIn([configCtrl]);
     configCtrl.on('ready', startLogic);
     configCtrl.start();
 
